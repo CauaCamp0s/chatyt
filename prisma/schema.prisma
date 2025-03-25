@@ -1,0 +1,167 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model CompraApartamento {
+  id              Int      @id @default(autoincrement())
+  interesse       String   @default("VENDA")
+  area_construida Float
+  quartos         Int
+  banheiros       Int
+  vagas_garagem   Int
+  andar           Int
+  condominio      String
+  valor_cond      Float
+  CaracteristicasCompraApartamento CaracteristicasCompraApartamento[]
+}
+
+model AluguelApartamento {
+  id              Int      @id @default(autoincrement())
+  interesse       String   @default("ALUGUEL")
+  area_construida Float
+  quartos         Int
+  banheiros       Int
+  vagas_garagem   Int
+  andar           Int
+  condominio      String
+  valor_cond      Float
+  CaracteristicasAluguelApartamento CaracteristicasAluguelApartamento[]
+}
+
+model CaracteristicasCompraApartamento {
+  id                   Int      @id @default(autoincrement())
+  compra_apartamento_id Int
+  ar_condicionado      Boolean
+  area_servico         Boolean
+  armarios_cozinha     Boolean
+  armarios_quarto      Boolean
+  mobiliado            Boolean
+  varanda              Boolean
+  area_murada          Boolean
+  condominio_fechado   Boolean
+  piscina              Boolean
+  portao_eletronico    Boolean
+  CompraApartamento    CompraApartamento @relation(fields: [compra_apartamento_id], references: [id])
+}
+
+model CaracteristicasAluguelApartamento {
+  id                   Int      @id @default(autoincrement())
+  aluguel_apartamento_id Int
+  ar_condicionado      Boolean
+  area_servico         Boolean
+  armarios_cozinha     Boolean
+  armarios_quarto      Boolean
+  mobiliado            Boolean
+  varanda              Boolean
+  area_murada          Boolean
+  condominio_fechado   Boolean
+  permitido_animais    Boolean
+  piscina              Boolean
+  portao_eletronico    Boolean
+  AluguelApartamento   AluguelApartamento @relation(fields: [aluguel_apartamento_id], references: [id])
+}
+
+model VendaCasa {
+  id              Int      @id @default(autoincrement())
+  interesse       String   @default("VENDA")
+  area_construida Float
+  quartos         Int
+  banheiros       Int
+  vagas_garagem   Int
+  posicao_imovel  String
+  condominio      String
+  valor_cond      Float
+  CaracteristicasVenda CaracteristicasVenda[]
+  CaracteristicasCondominio CaracteristicasCondominio[]
+  InteresseImovel InteresseImovel[]
+}
+
+model AluguelCasa {
+  id              Int      @id @default(autoincrement())
+  interesse       String   @default("ALUGUEL")
+  area_construida Float
+  quartos         Int
+  banheiros       Int
+  vagas_garagem   Int
+  posicao_imovel  String
+  condominio      String
+  valor_cond      Float
+  CaracteristicasAluguel CaracteristicasAluguel[]
+}
+
+model CaracteristicasVenda {
+  id               Int      @id @default(autoincrement())
+  venda_casa_id    Int
+  ar_condicionado  Boolean
+  area_servico     Boolean
+  armarios_cozinha Boolean
+  armarios_quarto  Boolean
+  mobiliado        Boolean
+  varanda          Boolean
+  area_murada      Boolean
+  condominio_fechado Boolean
+  piscina          Boolean
+  portao_eletronico Boolean
+  VendaCasa        VendaCasa @relation(fields: [venda_casa_id], references: [id])
+}
+
+model CaracteristicasAluguel {
+  id               Int      @id @default(autoincrement())
+  aluguel_casa_id  Int
+  ar_condicionado  Boolean
+  area_servico     Boolean
+  armarios_cozinha Boolean
+  armarios_quarto  Boolean
+  mobiliado        Boolean
+  varanda          Boolean
+  area_murada      Boolean
+  condominio_fechado Boolean
+  permitido_animais Boolean
+  piscina          Boolean
+  portao_eletronico Boolean
+  AluguelCasa      AluguelCasa @relation(fields: [aluguel_casa_id], references: [id])
+}
+
+model CaracteristicasCondominio {
+  id               Int      @id @default(autoincrement())
+  imovel_id        Int
+  tipo_imovel      String
+  area_murada      Boolean
+  condominio_fechado Boolean
+  permitido_animais Boolean
+  piscina          Boolean
+  portao_eletronico Boolean
+  seguranca_24h    Boolean
+  VendaCasa        VendaCasa @relation(fields: [imovel_id], references: [id])
+}
+
+model BairrosInteresse {
+  id               Int        @id @default(autoincrement())
+  nome             String
+  compradores      Comprador[] // Removido @relation(references: [id])
+}
+
+model Comprador {
+  id               Int        @id @default(autoincrement())
+  nome             String
+  telefone         String
+  valor_disponivel Float
+  InteresseImovel  InteresseImovel[]
+  bairros_interesse BairrosInteresse[] // Removido @relation(references: [id])
+}
+
+model InteresseImovel {
+  id               Int        @id @default(autoincrement())
+  comprador_id     Int
+  imovel_id        Int
+  tipo_imovel      String
+  data_interesse   DateTime   @default(now())
+
+  Comprador        Comprador  @relation(fields: [comprador_id], references: [id], map: "InteresseImovel_comprador_fkey")
+  VendaCasa        VendaCasa  @relation(fields: [imovel_id], references: [id], map: "InteresseImovel_venda_casa_fkey")
+}
