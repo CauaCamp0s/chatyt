@@ -144,7 +144,7 @@ model compraapartamento {
 model comprador {
   id               Int    @id @default(autoincrement())
   nome             String
-  telefone         String
+  telefone         String @unique
   valor_disponivel Float
 }
 

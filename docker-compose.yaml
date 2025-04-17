@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   redis:
@@ -6,3 +6,21 @@ services:
     command: redis-server --requirepass Redis2019!
     ports:
       - "6379:6379"
+
+  mysql:
+    image: mysql/mysql-server:8.0
+    container_name: chatyt-mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=140610
+      - MYSQL_DATABASE=imobiliaria
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=140610
+    ports:
+      - "3306:3306"
+    volumes:
+      - chatyt_mysql_data:/var/lib/mysql
+
+volumes:
+  chatyt_mysql_data:
+    driver: local
